@@ -17,7 +17,18 @@
 
     <link rel="stylesheet" href="./weui.css">
     <link rel="stylesheet" href="./apply.css">
-    <script src="../vue@2.6.14.js"></script>
+    <script src="./vue.js"></script>
+    <style>
+        ::-webkit-input-placeholder { /* Edge */
+  color: black;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: black;
+}
+::placeholder {
+  color: black;
+}
+    </style>
 </head>
 
 <body>
@@ -37,7 +48,7 @@
                                 <div class="step "><img src="./true.png"><span>校级审批</span></div>
                             </div>
                             <div class="weui-cells__title">外出信息</div>
-                            <div class="weui-cells weui-cells_form">
+                            <div class="weui-cells weui-cells_form" style="background: #fff;">
                                 <div class="info_list">
                                     <div><span class="bt">*</span>开始日期</div>
                                     <div class="form_select">
@@ -54,18 +65,18 @@
                                 </div>
                                 <div class="info_list">
                                     <div><span class="bt">*</span>外出地点</div>
-                                    <input type="text" name="sOutAddress" placeholder="外出地点(请具体填写到区/县)" style="color: black!important;"
-                                        :value="formData['location']" autocomplete="off" disabled>
+                                    {{formData['location']}}
                                 </div>
-                                <div class="weui-input-row" style="padding: 0 .3rem .3rem; .3rem;">
+                                <div class="weui-input-row" style="padding: 0 .3rem .3rem">
                                     <label class="smTitle"><span class="bt">*</span><span
                                             class="sNowAddr_required">外出事由</span>
                                     </label>
                                     <div class="weui-cell" style="padding: 0rem;">
                                         <div class="weui-cell__bd">
-                                            <textarea class="weui-textarea" name="sOutReason"
-                                                :value="formData['reason']" rows="3"
-                                                style="border: 1px solid #efefef;color: black!important;" disabled></textarea>
+                                            <div style="border: 1px solid #efefef;min-height: 1rem;color: black;">
+                                                {{formData['reason']}}
+                                            </div>
+                                           
                                         </div>
                                     </div>
                                 </div>
@@ -104,6 +115,11 @@
             </div>
     </div>
     </template>
+    <div v-else style="background: rgba(0,0,0,0.3)">
+        <input type="text" v-model="verifyKey" placeholder="Please enter your name" style="color: red!important;border: 1px solid #efefef">
+        <button @click="handleVerify"
+                        style="font-size: 0.5rem;padding: 0.1rem;margin-top: 0.3rem;">确定</button>
+    </div>
     </div>
 </body>
 <script>
@@ -111,7 +127,8 @@
     new Vue({
         el: '#app',
         data: {
-            isVerify: !!JSON.parse(localStorage.getItem('isVerify')),
+            isVerify: false,
+            verifyKey: '',
             isEdit: false,
             count: 0,
             timeOutPointer: null,
@@ -134,17 +151,30 @@
                 end_date: ''
             }
         },
-        created() {
-            if(!this.isVerify){
-                var name = prompt("Please enter your name", "")
-                if (name != null && name === "888") {
-                    this.isVerify = true
-                    localStorage.setItem('isVerify',true)
-                }
-            }
+        actived(){
+            alert(132)
+        },
+        async created() {
+            // if(!this.isVerify){
+            //     var name = await prompt("Please enter your name", "")
+            //     if (name != null && name === "888") {
+            //         this.isVerify = true
+            //         localStorage.setItem('isVerify',true)
+            //     }else {
+            //         alert('验证失败')
+            //     }
+            // }
             this.formData = JSON.parse(this.formDataString) 
         },
         methods: {
+            handleVerify() {
+                if (this.verifyKey != null && this.verifyKey === "888") {
+                    this.isVerify = true
+                    localStorage.setItem('isVerify',true)
+                }else {
+                    alert('验证失败')
+                }
+            },
             handleTapper() {
                 if (this.count > 5) {
                     return this.isEdit = true
@@ -158,7 +188,6 @@
                 }
             },
             handleSave() {
-                console.log(this.$refs['formDataInput'])
                 try {
                     this.formDataString = JSON.stringify(this.formData)
                     localStorage.setItem(storageKey, this.formDataString)
