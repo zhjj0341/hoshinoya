@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="full-screen" content="yes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="cache-control" content="max-age=0">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>外出申请</title>
+
+    <link rel="stylesheet" href="./weui.css">
+    <link rel="stylesheet" href="./apply.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+</head>
+
+<body>
+    <div id="app">
+        <template v-if="isVerify">
+            <div id="container">
+                <!-- 加载中 -->
+                <div class="main">
+                    <form class="input-group layui-form" lay-filter="filter_form">
+
+                        <div class="weui-cells__group weui-cells__group_form">
+
+                            <div class="weui-cells__title">申请流程</div>
+                            <div class="step_box">
+                                <div class="step line"><img src="./true.png"><span>提交</span></div>
+                                <div class="step line"><img src="./true.png"><span>院级审批</span></div>
+                                <div class="step "><img src="./true.png"><span>校级审批</span></div>
+                            </div>
+                            <div class="weui-cells__title">外出信息</div>
+                            <div class="weui-cells weui-cells_form">
+                                <div class="info_list">
+                                    <div><span class="bt">*</span>开始日期</div>
+                                    <div class="form_select">
+                                        <div class="dOutStartDate">{{formData['start_date']}}</div>
+                                        <span id="dOutStartDate">选择</span>
+                                    </div>
+                                </div>
+                                <div class="info_list">
+                                    <div><span class="bt">*</span>结束日期</div>
+                                    <div class="form_select">
+                                        <div class="dOutEndDate">{{formData['end_date']}}</div>
+                                        <span id="dOutEndDate">选择</span>
+                                    </div>
+                                </div>
+                                <div class="info_list">
+                                    <div><span class="bt">*</span>外出地点</div>
+                                    <input type="text" name="sOutAddress" placeholder="外出地点(请具体填写到区/县)"
+                                        :value="formData['location']" autocomplete="off">
+                                </div>
+                                <div class="weui-input-row" style="padding: 0 .3rem .3rem; .3rem;">
+                                    <label class="smTitle"><span class="bt">*</span><span
+                                            class="sNowAddr_required">外出事由</span>
+                                    </label>
+                                    <div class="weui-cell" style="padding: 0rem;">
+                                        <div class="weui-cell__bd">
+                                            <textarea class="weui-textarea" name="sOutReason"
+                                                :value="formData['reason']" rows="3"
+                                                style="border: 1px solid #efefef;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="weui-cells__title">我的信息</div>
+                            <div class="info_box">
+                                <div class="info_list"><span>姓名</span><span>{{formData['name']}}</span></div>
+                                <div class="info_list"><span>学号</span><span>{{formData['num']}}</span></div>
+                                <div class="info_list"><span>学院</span><span>{{formData['department']}}</span></div>
+                                <div class="info_list"><span>年级</span><span>{{formData['grade']}}</span></div>
+                                <div class="info_list"><span>人员类型</span><span>{{formData['role']}}</span></div>
+                            </div>
+
+                            <div class="bottomTips">温馨提示：每次只能发起一次外出申请，外出申请生效期间内无法再次发起申请。</div>
+
+                            <div class="btn_add" onclick="Global_FN.sub()" style="display: none;">提交</div>
+                            <div class="btn_cancel" onclick="Global_FN.cancel()" style="display: none;">撤销</div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="logo_box" style="display: block;">
+                    <div v-if="isEdit" style="background: rgba(0,0,0,0.5);    padding: 5px;;">
+                        <table style="font-size: 0.3rem;">
+                            <tr v-for="(item,name) in formData" style="background:#efefef;padding: 0.3rem;">
+                                <td>{{name}}</td>
+                                <td><input type="text" v-model="formData[name]"></td>
+                    </div>
+                    </table>
+
+                    <button @click="handleSave"
+                        style="font-size: 0.5rem;padding: 0.1rem;margin-top: 0.3rem;">确定</button>
+                </div>
+                <img v-else id="logo" src="./pass.png" alt="" @click="handleTapper">
+            </div>
+    </div>
+    </template>
+    </div>
+</body>
+<script>
+    const storageKey = 'storageKey'
+    new Vue({
+        el: '#app',
+        data: {
+            isVerify: !!JSON.parse(localStorage.getItem('isVerify')),
+            isEdit: false,
+            count: 0,
+            timeOutPointer: null,
+            formDataString: (() => {
+                let result = '{"name":"张三","num":"12313213","department":"环境与能源学院","grade":"2020","role":"研究生","reason":"在校外居住，暂不返回","location":"穗石村","start_date":"2022-03-18","end_date":"2022-03-18"}'
+                try {
+                    result = localStorage.getItem(storageKey) || result
+                } catch (e) { }
+                return result
+            })(),
+            formData: {
+                name: '',
+                num: '',
+                department: '',
+                grade: '',
+                role: '',
+                reason: '',
+                location: '',
+                start_date: '',
+                end_date: ''
+            }
+        },
+        created() {
+            if(!this.isVerify){
+                var name = prompt("Please enter your name", "")
+                if (name != null && name === "888") {
+                    this.isVerify = true
+                    localStorage.setItem('isVerify',true)
+                }
+            }
+            this.formData = JSON.parse(this.formDataString) 
+        },
+        methods: {
+            handleTapper() {
+                console.log(123)
+                if (this.count > 5) {
+                    return this.isEdit = true
+                }
+                this.count += 1
+                console.log()
+                if (!this.timeOutPointer) {
+                    this.timeOutPointer = setTimeout(() => {
+                        this.timeOutPointer = null
+                        this.count = 0
+                    }, 5000)
+                }
+            },
+            handleSave() {
+                console.log(this.$refs['formDataInput'])
+                try {
+                    this.formDataString = JSON.stringify(this.formData)
+                    localStorage.setItem(storageKey, this.formDataString)
+                    this.isEdit = false
+                } catch (e) {
+                    alert('数据格式错误')
+                }
+            }
+        }
+    })
+</script>
+
+</html>
