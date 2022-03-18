@@ -127,7 +127,7 @@
     new Vue({
         el: '#app',
         data: {
-            isVerify: false,
+            isVerify: !!JSON.parse(localStorage.getItem('isVerify')),
             verifyKey: '',
             isEdit: false,
             count: 0,
