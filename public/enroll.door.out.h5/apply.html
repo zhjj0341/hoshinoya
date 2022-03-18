@@ -55,7 +55,7 @@
                                 <div class="info_list">
                                     <div><span class="bt">*</span>外出地点</div>
                                     <input type="text" name="sOutAddress" placeholder="外出地点(请具体填写到区/县)"
-                                        :value="formData['location']" autocomplete="off">
+                                        :value="formData['location']" autocomplete="off" disabled>
                                 </div>
                                 <div class="weui-input-row" style="padding: 0 .3rem .3rem; .3rem;">
                                     <label class="smTitle"><span class="bt">*</span><span
@@ -65,7 +65,7 @@
                                         <div class="weui-cell__bd">
                                             <textarea class="weui-textarea" name="sOutReason"
                                                 :value="formData['reason']" rows="3"
-                                                style="border: 1px solid #efefef;"></textarea>
+                                                style="border: 1px solid #efefef;" disabled></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -146,12 +146,10 @@
         },
         methods: {
             handleTapper() {
-                console.log(123)
                 if (this.count > 5) {
                     return this.isEdit = true
                 }
                 this.count += 1
-                console.log()
                 if (!this.timeOutPointer) {
                     this.timeOutPointer = setTimeout(() => {
                         this.timeOutPointer = null
