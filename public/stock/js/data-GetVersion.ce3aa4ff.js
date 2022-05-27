@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["data-GetVersion"],{f6a3:function(e){e.exports={latest:"1.1.10755",date:20220315,code:0,message:"success"}}}]);

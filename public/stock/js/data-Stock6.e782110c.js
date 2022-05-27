@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["data-Stock6"],{"3c2b":function(s){s.exports={stock:[{events:{margin:1,shhk:1,szhk:0,hk:0,hksymbol:null,hkname:null,st:0},symbol:"600000.sh"}],start:0,end:50,count:1,ticket:16,version:"HQ.Stock 2.0",message:null,code:0,servertime:"2022-05-06 16:35:05"}}}]);
